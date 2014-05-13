@@ -153,35 +153,37 @@ var func = shield(function(){
     // Define a function that simply returns what func returns, and forwards the arguments
     function wrappedFunction() {
       try {
-        /**
-        If someone does new SomeWrappedFunction(),
-        the value of this is an instanceof wrappedFunction.
 
-        But thanks to the line at the bottom of wrapInTryCatch,
-        wrappedFunction is an instanceof the original function,
+        /*        
+          If someone does new SomeWrappedFunction(),
+          the value of this is an instanceof wrappedFunction.
 
-        `this` gets all the right properties, but a resulting objects properties may not
-        be it's *own* properties.. well this check shows there are zero side effects:
+          But thanks to the line at the bottom of wrapInTryCatch,
+          wrappedFunction is an instanceof the original function,
 
-        function printThis() {
-          this.prop = 'this.prop value!';
-          console.log('this:', this);
-          console.log('this.proto:', this.prototype);
-        }
-        printThis.prototype.protoProp = 'protoProp value!';
-        function printProperties(obj) {
-          for (var p in obj) {
-            console.log(
-              (obj.hasOwnProperty(p) ? '... OWNED ' : 'NOT OWNED ') + p + ': ' + obj[p]
-            );
+          `this` gets all the right properties, but a resulting objects properties may not
+          be it's *own* properties.. well this check shows there are zero side effects:
+
+          function printThis() {
+            this.prop = 'this.prop value!';
+            console.log('this:', this);
+            console.log('this.proto:', this.prototype);
           }
-        }
-        printThis();
-        printProperties(new printThis());
-        printThis = wrapInTryCatch(printThis);
-        printThis();
-        printProperties(new printThis());
+          printThis.prototype.protoProp = 'protoProp value!';
+          function printProperties(obj) {
+            for (var p in obj) {
+              console.log(
+                (obj.hasOwnProperty(p) ? '... OWNED ' : 'NOT OWNED ') + p + ': ' + obj[p]
+              );
+            }
+          }
+          printThis();
+          printProperties(new printThis());
+          printThis = wrapInTryCatch(printThis);
+          printThis();
+          printProperties(new printThis());
         */
+
         return func.apply(this, Array.prototype.slice.call(arguments) );
       } catch (uncaughtException) {
         return sendUncaughtException(uncaughtException);
@@ -230,25 +232,25 @@ var func = shield(function(){
 
   // Export/define library just like lodash
 
-  /** Used to determine if values are of the language type Object */
+  // Used to determine if values are of the language type Object
   var objectTypes = {
     'function': true,
     'object': true
   };
 
-  /** Used as a reference to the global object */
+  // Used as a reference to the global object
   var root = (objectTypes[typeof window] && window) || this;
 
-  /** Detect free variable `exports` */
+  // Detect free variable `exports`
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `module` */
+  // Detect free variable `module`
   var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
-  /** Detect the popular CommonJS extension `module.exports` */
+  // Detect the popular CommonJS extension `module.exports`
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
+  // Detect free variable `global` from Node.js or Browserified code and use it as `root`
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
     root = freeGlobal;
